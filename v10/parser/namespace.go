@@ -81,7 +81,7 @@ func (n *Namespace) decodeTypeDefinition(name, namespace string, schema interfac
 	switch schema.(type) {
 	case string:
 		typeStr := schema.(string)
-		return n.getTypeByName(namespace, typeStr, schema), nil
+		return n.getTypeByName(namespace, typeStr, "", schema), nil
 
 	case []interface{}:
 		return n.decodeUnionDefinition(name, namespace, schema.([]interface{}))
@@ -295,6 +295,11 @@ func (n *Namespace) decodeComplexDefinition(name, namespace string, typeMap map[
 	if err != nil {
 		return nil, err
 	}
+	logicalTypeStr, err := getOptionalMapString(typeMap, "logicalType")
+	if err != nil {
+		return nil, err
+	}
+
 	switch typeStr {
 	case "array":
 		items, ok := typeMap["items"]
@@ -362,11 +367,11 @@ func (n *Namespace) decodeComplexDefinition(name, namespace string, typeMap map[
 
 	default:
 		// If the type isn't a special case, it's a primitive or a reference to an existing type
-		return n.getTypeByName(namespace, typeStr, typeMap), nil
+		return n.getTypeByName(namespace, typeStr, logicalTypeStr, typeMap), nil
 	}
 }
 
-func (n *Namespace) getTypeByName(namespace string, typeStr string, definition interface{}) avro.AvroType {
+func (n *Namespace) getTypeByName(namespace string, typeStr, logicalTypeStr string, definition interface{}) avro.AvroType {
 	switch typeStr {
 	case "int":
 		return avro.NewIntField(definition)
@@ -387,7 +392,12 @@ func (n *Namespace) getTypeByName(namespace string, typeStr string, definition i
 		return avro.NewBytesField(definition)
 
 	case "string":
-		return avro.NewStringField(definition)
+		if logicalTypeStr == "date-time" {
+			return avro.NewDateTimeField(definition)
+		} else {
+			return avro.NewStringField(definition)
+		}
+
 
 	case "null":
 		return avro.NewNullField(definition)

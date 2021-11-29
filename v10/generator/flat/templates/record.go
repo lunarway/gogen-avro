@@ -2,6 +2,10 @@ package templates
 
 const RecordTemplate = `
 
+{{ if containsDateTimeField . }}
+	import "time"
+{{ end }}
+
 {{ if ne .Doc "" }}// {{ .Doc}}{{ end }}
 type {{ .Name }} struct {
 {{ range $i, $field := .Fields -}}

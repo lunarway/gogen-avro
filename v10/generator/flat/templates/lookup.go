@@ -43,6 +43,14 @@ func Evaluate(templateStr string, obj interface{}) (string, error) {
 			return convertByteToInitForm(fingerprint), err
 		},
 		"isNullable": isNullable,
+		"containsDateTimeField": func(def avro.Definition) bool {
+			for _, field := range def.Children() {
+				if field.GoType() == "time.Time" {
+					return true
+				}
+			}
+			return false
+		},
 	}).Parse(templateStr)
 	if err != nil {
 		return "", err
@@ -66,3 +74,4 @@ func isNullable(t avro.AvroType) bool {
 	}
 	return false
 }
+

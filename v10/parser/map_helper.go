@@ -35,3 +35,15 @@ func getMapFloat(m map[string]interface{}, key string) (float64, error) {
 	}
 	return typedVal, nil
 }
+
+func getOptionalMapString(m map[string]interface{}, key string) (string, error) {
+	val, ok := m[key]
+	if !ok {
+		return "", nil
+	}
+	typedVal, ok := val.(string)
+	if !ok {
+		return "", NewWrongMapValueTypeError(key, "string", val)
+	}
+	return typedVal, nil
+}
