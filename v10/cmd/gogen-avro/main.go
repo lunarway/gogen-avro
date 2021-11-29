@@ -22,6 +22,7 @@ func main() {
 	pkg := generator.NewPackage(cfg.packageName, codegenComment(cfg))
 	namespace := parser.NewNamespace(cfg.shortUnions)
 	gen := flat.NewFlatPackageGenerator(pkg, cfg.containers)
+	checker := flat.NewChecker()
 
 	switch cfg.namespacedNames {
 	case nsShort:
@@ -48,6 +49,14 @@ func main() {
 		if err := resolver.ResolveDefinition(def, namespace.Definitions); err != nil {
 			fmt.Fprintf(os.Stderr, "Error resolving definition for type %q - %v\n", def.Name(), err)
 			os.Exit(4)
+		}
+	}
+
+	for _, def := range namespace.Roots {
+		err = checker.Check(def)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error generating code for schema - %v\n", err)
+			os.Exit(5)
 		}
 	}
 

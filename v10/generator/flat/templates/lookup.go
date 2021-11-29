@@ -15,12 +15,6 @@ var NoTemplateForType = fmt.Errorf("No template exists for supplied type")
 func Template(t avro.Node) (string, error) {
 	var templateDef string
 	switch t.(type) {
-	case *avro.ArrayField:
-		templateDef = ArrayTemplate
-	case *avro.BytesField:
-		templateDef = BytesTemplate
-	case *avro.MapField:
-		templateDef = MapTemplate
 	case *avro.UnionField:
 		templateDef = UnionTemplate
 	case *avro.EnumDefinition:
