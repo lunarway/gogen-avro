@@ -18,4 +18,13 @@ type {{ .Name }} struct {
 {{ end }}
 }
 
+func (r *{{ .GoType }}) ApplyDefaults() {
+{{ range $i, $field := .Fields -}}
+	{{ if eq $field.Type.WrapperType "types.Record" -}}
+		r.{{ $field.GoName }}.ApplyDefaults()
+	{{ else if .HasDefault -}}
+		{{ $.DefaultForField $field }}
+	{{ end -}}
+{{ end -}}
+}
 `
