@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path/filepath"
-	"strings"
 
 	"github.com/actgardner/gogen-avro/v10/generator"
 	"github.com/actgardner/gogen-avro/v10/generator/flat"
@@ -69,24 +67,5 @@ func main() {
 // codegenComment generates a comment informing readers they are looking at
 // generated code. If source avro files are provided they're included in the comment
 func codegenComment(c config) string {
-	if !c.sourcesComment {
-		return fileComment
-	}
-	sourcesComment := `%s
-/*
- * %s
- */`
-	var sourceBlock []string
-	if len(c.files) == 1 {
-		sourceBlock = append(sourceBlock, "SOURCE:")
-	} else {
-		sourceBlock = append(sourceBlock, "SOURCES:")
-	}
-
-	for _, source := range c.files {
-		_, fName := filepath.Split(source)
-		sourceBlock = append(sourceBlock, fmt.Sprintf(" *     %s", fName))
-	}
-	return fmt.Sprintf(sourcesComment, fileComment, strings.Join(sourceBlock, "\n"))
-
+	return fileComment
 }
