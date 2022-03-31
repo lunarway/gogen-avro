@@ -3,8 +3,6 @@ package templates
 const UnionTemplate = `
 import (
 	"encoding/json"
-
-	"github.com/actgardner/gogen-avro/v10/vm/types"
 )
 
 
@@ -24,7 +22,7 @@ type {{ .Name }} struct {
 	UnionType {{ $.UnionEnumType }}
 }
 
-func {{ .ConstructorMethod }} {{ .GoType }} {
+func {{ .ConstructorMethod }} *{{ .GoType }} {
 	return &{{ .Name }}{}
 } 
 
